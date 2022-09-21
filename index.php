@@ -25,3 +25,15 @@ function sid_footer() {
 	}
 }
 add_action( 'wp_footer', 'sid_footer' );
+
+function gravityviewlist_display() {
+    $output = '<div class="formslist"><ol>';
+    // by default, only active and not in trash
+    // https://docs.gravityforms.com/api-functions/#get-forms
+    $forms = GFAPI::get_forms();
+    foreach ( $forms as $form) {
+        $output .= "<li><a href='view/".urlencode_deep($form['title'])."/'>".$form['title'] . "</a></li>";
+    }
+    return $output . '</ol></div>';
+}
+add_shortcode( 'gravityviewlist', 'gravityviewlist_display' );
