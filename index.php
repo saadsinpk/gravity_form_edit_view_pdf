@@ -27,12 +27,24 @@ function sid_footer() {
 add_action( 'wp_footer', 'sid_footer' );
 
 function gravityviewlist_display() {
+	global $wpdb;
     $output = '<div class="formslist"><ol>';
     // by default, only active and not in trash
     // https://docs.gravityforms.com/api-functions/#get-forms
     $forms = GFAPI::get_forms();
+    // echo "<pre>";
+    	// print_r(get_post_meta(15152, '_gravityview_form_id'));
+    // echo "</pre>";
+    // exit();
     foreach ( $forms as $form) {
-        $output .= "<li><a href='view/".urlencode_deep($form['title'])."/'>".$form['title'] . "</a></li>";
+    	$formId = $form['fields'][0]->formId;
+    	$title_link = '';
+		$data = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s", '_gravityview_form_id', $formId) , ARRAY_N );
+		if(isset($data[0])) {
+			$data[0][1];
+			$title_link = get_permalink($data[0][1]);
+		}
+        $output .= $url."<li><a href='".$title_link."'>".$form['title'] . '</a></li>';
     }
     return $output . '</ol></div>';
 }
